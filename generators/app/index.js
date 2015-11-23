@@ -1,7 +1,12 @@
 'use strict';
+var path = require('path');
+var util = require('util');
+
 var yeoman = require('yeoman-generator');
 var chalk = require('chalk');
 var yosay = require('yosay');
+var _     = require('lodash');
+var camelCase = require('camel-case')
 
 module.exports = yeoman.generators.Base.extend({
   prompting: function () {
@@ -9,32 +14,64 @@ module.exports = yeoman.generators.Base.extend({
 
     // Have Yeoman greet the user.
     this.log(yosay(
-      'Welcome to the excellent ' + chalk.red('generator-express-project') + ' generator!'
+      'Welcome to the exceptional ' + chalk.red('ExpressProject') + ' generator!'
     ));
 
     var prompts = [{
-      type: 'confirm',
-      name: 'someOption',
-      message: 'Would you like to enable this option?',
-      default: true
+      type: 'input',
+      name: 'name',
+      message: 'The name of your project',
+      default: path.basename(process.cwd()),
     }];
 
-    this.prompt(prompts, function (props) {
-      this.props = props;
-      // To access props later use this.props.someOption;
+    this.prompt(prompts, function (options) {
+      this.options = options;
+
+      // set camelCase version
+      var _name = camelCase(options.name);
+      this.options.camelCaseName = _name.charAt(0).toUpperCase() + _name.slice(1);
 
       done();
     }.bind(this));
   },
 
-  writing: function () {
-    this.fs.copy(
-      this.templatePath('dummyfile.txt'),
-      this.destinationPath('dummyfile.txt')
-    );
+  writing: {
+    app: function () {
+
+      var name = this.options.name;
+
+      var files = {
+        'package.json': 'package.json',
+        'cli/start.js': 'cli/start.js',
+        'index.js': 'index.js',
+      };
+
+      _.each(files, function (dest, src) {
+        this.fs.copyTpl(
+          this.templatePath(src),
+          this.destinationPath(dest),
+        this.options);
+      }.bind(this));
+    },
+
+    projectfiles: function () {
+
+      var files = {
+        'gulpfile.js': 'gulpfile.js',
+        '_gitignore': '.gitignore',
+        'README.md': 'README.md'
+      };
+
+      _.each(files, function (dest, src) {
+        this.fs.copy(this.templatePath(src), this.destinationPath(dest), this.options);
+      }.bind(this));
+    }
   },
 
   install: function () {
-    this.installDependencies();
+    this.installDependencies({
+      bower: false,
+      npm: true
+    });
   }
 });

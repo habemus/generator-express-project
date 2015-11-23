@@ -1,57 +1,66 @@
-'use strict';
 var path = require('path');
-var gulp = require('gulp');
-var eslint = require('gulp-eslint');
-var excludeGitignore = require('gulp-exclude-gitignore');
-var mocha = require('gulp-mocha');
-var istanbul = require('gulp-istanbul');
-var nsp = require('gulp-nsp');
-var plumber = require('gulp-plumber');
-var coveralls = require('gulp-coveralls');
+var fs   = require('fs');
 
-gulp.task('static', function () {
-  return gulp.src('**/*.js')
-    .pipe(excludeGitignore())
-    .pipe(eslint())
-    .pipe(eslint.format())
-    .pipe(eslint.failAfterError());
+var gulp        = require('gulp');
+var gulpReplace = require('gulp-replace');
+var gulpRename  = require('gulp-rename');
+var gulpIf      = require('gulp-if');
+var gulpSize    = require('gulp-size');
+var git         = require('gulp-git');
+var del         = require('del');
+
+var TMP_DIR = './tmp';
+var APP_TPL_DIR = './generators/app/templates';
+
+/**
+ * Updates the base repo
+ */
+gulp.task('update', function (done) {
+
+  var cloneOptions = {
+    args: TMP_DIR,
+  };
+
+  // Clone git
+  git.clone('https://github.com/habemus/base-express-project.git', cloneOptions, function (err) {
+
+    // Remove the current templates dir
+    del.sync(APP_TPL_DIR);
+
+    // Remove .git dir
+    del.sync(TMP_DIR + '/.git');
+
+    if (err) {
+      done(err)
+    }
+
+    // RegExp to match . (dot) files
+    var _dotFileRe = /^\.(.+)/;
+
+    gulp.src(TMP_DIR + '/**/*', { dot: true })
+      // strings
+      .pipe(gulpReplace("'_SERVER_PROJECT_NAME_'", "'<%= name %>'"))
+      .pipe(gulpReplace('"_SERVER_PROJECT_NAME_"', '"<%= name %>"'))
+      // code
+      .pipe(gulpReplace('_SERVER_PROJECT_NAME_', '<%= camelCaseName %>'))
+      .pipe(gulpRename(function (filePath) {
+        var basename = filePath.basename;
+
+        var match = basename.match(_dotFileRe);
+
+        if (match) {
+          // If the file is a dot file, rename it
+          filePath.basename = '_' + match[1];
+        }
+      }))
+      .pipe(gulpSize())
+      .pipe(gulp.dest(APP_TPL_DIR))
+      .on('end', function () {
+        del.sync(TMP_DIR);
+        done();
+      });
+  });
+
 });
 
-gulp.task('nsp', function (cb) {
-  nsp({package: path.resolve('package.json')}, cb);
-});
-
-gulp.task('pre-test', function () {
-  return gulp.src('generators/**/*.js')
-    .pipe(istanbul({
-      includeUntested: true
-    }))
-    .pipe(istanbul.hookRequire());
-});
-
-gulp.task('test', ['pre-test'], function (cb) {
-  var mochaErr;
-
-  gulp.src('test/**/*.js')
-    .pipe(plumber())
-    .pipe(mocha({reporter: 'spec'}))
-    .on('error', function (err) {
-      mochaErr = err;
-    })
-    .pipe(istanbul.writeReports())
-    .on('end', function () {
-      cb(mochaErr);
-    });
-});
-
-gulp.task('coveralls', ['test'], function () {
-  if (!process.env.CI) {
-    return;
-  }
-
-  return gulp.src(path.join(__dirname, 'coverage/lcov.info'))
-    .pipe(coveralls());
-});
-
-gulp.task('prepublish', ['nsp']);
-gulp.task('default', ['static', 'test', 'coveralls']);
+gulp.task('default', ['update']);

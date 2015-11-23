@@ -1,40 +1,37 @@
 {
   "name": "generator-express-project",
   "version": "0.0.0",
-  "description": "Generator for express-based project",
-  "homepage": "",
+  "description": "Yeoman generator",
+  "license": "MIT",
+  "main": "app/index.js",
   "author": {
-    "name": "Simon",
-    "email": "simonxd@gmail.com",
-    "url": ""
+    "name": "",
+    "email": "",
+    "url": "https://github.com/someuser"
+  },
+  "scripts": {
+    "test": "mocha"
   },
   "files": [
     "generators"
   ],
-  "main": "generators/index.js",
   "keywords": [
     "yeoman-generator"
   ],
   "dependencies": {
-    "yeoman-generator": "^0.21.1",
+    "camel-case": "^1.2.0",
     "chalk": "^1.0.0",
+    "yeoman-generator": "^0.19.0",
     "yosay": "^1.0.2"
   },
   "devDependencies": {
-    "yeoman-assert": "^2.0.0",
-    "gulp": "^3.6.0",
-    "gulp-eslint": "^1.0.0",
-    "gulp-exclude-gitignore": "^1.0.0",
-    "gulp-istanbul": "^0.9.0",
-    "gulp-mocha": "^2.0.0",
-    "gulp-plumber": "^1.0.0",
-    "gulp-nsp": "^2.1.0",
-    "gulp-coveralls": "^0.1.0"
-  },
-  "repository": "simonfan/generator-express-project",
-  "scripts": {
-    "prepublish": "gulp prepublish",
-    "test": "gulp"
-  },
-  "license": "MIT"
+    "del": "^2.0.0",
+    "gulp": "^3.9.0",
+    "gulp-git": "^1.4.0",
+    "gulp-if": "^1.2.5",
+    "gulp-rename": "^1.2.2",
+    "gulp-replace": "^0.5.4",
+    "gulp-size": "^2.0.0",
+    "mocha": "*"
+  }
 }
