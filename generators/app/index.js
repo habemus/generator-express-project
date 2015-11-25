@@ -43,6 +43,12 @@ module.exports = yeoman.generators.Base.extend({
       var files = {
         'package.json': 'package.json',
         'cli/start.js': 'cli/start.js',
+        'client/index.js': 'client/index.js',
+        'demo/demo.js': 'demo/demo.js',
+        'demo/index.html': 'demo/index.html',
+        'demo/styles.css': 'demo/styles.css',
+        'tasks/client/build.js': 'tasks/client/build.js',
+        'tasks/client/develop.js': 'tasks/client/develop.js',
         'index.js': 'index.js',
       };
 
