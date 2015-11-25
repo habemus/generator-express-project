@@ -4,6 +4,7 @@ var http    = require('http');
 // external dependencies
 var express = require('express');
 var morgan  = require('morgan');
+var cors    = require('cors');
 
 /**
  * Function that starts the host server
@@ -15,6 +16,8 @@ function create<%= camelCaseName %>(options) {
 
   // logging
   app.use(morgan('dev'));
+
+  app.use(cors());
 
   // define description route
   app.get('/who', function (req, res) {
