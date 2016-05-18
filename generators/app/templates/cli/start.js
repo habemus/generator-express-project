@@ -2,27 +2,17 @@
 var path = require('path');
 var http = require('http');
 
-// external dependencies
-var commander = require('commander');
-var _         = require('lodash');
-
 // internal dependencies
 var pkg = require('../package.json');
 
 // internal dependencies
 var create<%= camelCaseName %> = require('../');
 
-commander
-  .version(pkg.version)
-  .option('-p, --port [port]', 'The port')
-  .option('-d, --dir  [dir]', 'Path to the directory in which files are stored.')
-  .parse(process.argv);
-
-var DEFAULT_OPTIONS = {
-  port: process.env.PORT || 8000,
-};
-
-var options = _.defaults(commander, DEFAULT_OPTIONS);
+var options = {
+  port: process.env.PORT,
+  apiVersion: pkg.version,
+  mongodbURI: process.env.MONGODB_URI
+}
 
 // instantiate the app
 var app = create<%= camelCaseName %>(options);

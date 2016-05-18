@@ -15,9 +15,10 @@ var browserSync = require('browser-sync').create();
 gulp.task('nodemon', function () {
   gulpNodemon({
     script: 'cli/start.js',
-    args: [
-      '--port', '4000',
-    ],
+    env: {
+      PORT: 4000,
+      MONGODB_URI: 'mongodb://localhost:27017/<%= camelCaseName %>'
+    },
     ext: 'js',
     ignore: [
       'client/**/*',

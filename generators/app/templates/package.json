@@ -22,10 +22,11 @@
     "vinyl-source-stream": "^1.1.0"
   },
   "dependencies": {
-    "commander": "^2.9.0",
+    "body-parser": "^1.15.1",
     "cors": "^2.7.1",
     "express": "^4.13.3",
-    "lodash": "^3.10.1",
+    "json-message": "^2.0.0-beta",
+    "mongoose": "^4.4.17",
     "morgan": "^1.6.1",
     "superagent": "^1.4.0"
   }
